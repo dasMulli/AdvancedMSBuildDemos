@@ -1,0 +1,52 @@
+<Project DefaultTargets="Build">
+
+  <PropertyGroup>
+    <Configuration>Release</Configuration>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SolutionFile Include="*.sln" />
+    <PublishProject Include="DemoAngular\DemoAngular.csproj" />
+    <NpmTestProject Include="@(PublishProject)" />
+  </ItemGroup>
+
+  <Target Name="Restore">
+    <MSBuild Projects="@(SolutionFile)" Targets="Restore;NpmInstall" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="BuildProjects;NpmLint;Publish;Test" />
+
+  <Target Name="_PrepareParameters">
+    <PropertyGroup>
+      <OutputBaseDir Condition="'$(BUILD_ARTIFACTSTAGINGDIRECTORY)' != ''">$(BUILD_ARTIFACTSTAGINGDIRECTORY)\</OutputBaseDir>
+      <OutputBaseDir Condition="'$(OutputBaseDir)' == ''">$(MSBuildThisFileDirectory)</OutputBaseDir>
+      <PublishBaseDir>$(OutputBaseDir)artifacts</PublishBaseDir>
+      <TestResultsBaseDir>$(OutputBaseDir)test-results</TestResultsBaseDir>
+      <BuildProperties>Configuration=$(Configuration)</BuildProperties>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="BuildProjects" DependsOnTargets="_PrepareParameters">
+    <MSBuild Projects="@(SolutionFile)" Targets="Build" Properties="$(BuildProperties)" />
+  </Target>
+
+  <Target Name="Publish" DependsOnTargets="_PrepareParameters">
+    <MSBuild Projects="@(PublishProject)" Targets="Publish" Properties="$(BuildProperties);PublishDir=$(PublishBaseDir)\%(PublishProject.Filename)" />
+  </Target>
+
+  <Target Name="Test" DependsOnTargets="NpmCiTest;VSTest">
+  </Target>
+
+  <Target Name="NpmLint" DependsOnTargets="_PrepareParameters">
+    <MSBuild Projects="@(NpmTestProject)" Targets="NpmLint" Properties="$(BuildProperties)" />
+  </Target>
+
+  <Target Name="NpmCiTest" DependsOnTargets="_PrepareParameters">
+    <MSBuild Projects="@(NpmTestProject)" Targets="NpmCiTest" Properties="$(BuildProperties);TestResultsOutputPath=$(TestResultsBaseDir)\%(NpmTestProject.Filename)\" />
+  </Target>
+
+  <Target Name="VSTest" DependsOnTargets="_PrepareParameters">
+    <MSBuild Projects="@(SolutionFile)" Targets="VSTest" Properties="$(BuildProperties);VSTestLogger=trx%3BLogFileName=VSTestResults.trx;TestResultsBaseDir=$(TestResultsBaseDir)" />
+  </Target>
+
+</Project>

@@ -1,0 +1,25 @@
+<Project>
+  <Target Name="NpmInstall" Condition="Exists('$(SpaRoot)package.json')">
+    <Exec Command="npm install" WorkingDirectory="$(SpaRoot)" />
+  </Target>
+  
+  <Target Name="NpmCiTest" Condition="Exists('$(SpaRoot)package.json')">
+    <Exec Command="npm run ci-test" WorkingDirectory="$(SpaRoot)" />
+    <ItemGroup Condition="'$(TestResultsOutputPath)' != ''">
+      <TestResultFiles Include="obj\karma-testresults\**" />
+    </ItemGroup>
+    <Copy SourceFiles="@(TestResultFiles)" DestinationFolder="$(TestResultsOutputPath)" Condition="'$(TestResultsOutputPath)' != ''" />
+  </Target>
+
+  <Target Name="NpmLint" Condition="'$(SpaRoot)' != ''">
+    <Exec Command="npm run lint" WorkingDirectory="$(SpaRoot)" />
+  </Target>
+  
+  <PropertyGroup Condition="'$(TestResultsBaseDir)' != ''">
+    <VSTestResultsDirectory>$(TestResultsBaseDir)\$(MSBuildProjectName)</VSTestResultsDirectory>
+  </PropertyGroup>
+  
+  <Target Name="VSTestIfTestProject">
+    <CallTarget Targets="VSTest" Condition="'$(IsTestProject)' == 'true'" />
+  </Target>
+</Project>

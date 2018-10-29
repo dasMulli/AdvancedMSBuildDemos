@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>netcoreapp2.1;netcoreapp2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <Target Name="PublishAll">
+    <ItemGroup>
+
+      <PublishTFMs Include="$(TargetFrameworks)" />
+
+      <PublishProjects Include="$(MSBuildProjectFile)">
+        <AdditionalProperties>TargetFramework=%(PublishTFMs.Identity)</AdditionalProperties>
+      </PublishProjects>
+
+    </ItemGroup>
+
+    <MSBuild Projects="@(PublishProjects)" Targets="Publish" />
+
+  </Target>
+
+  <!--
+  For multiple target frameworks and runtime identifiers, see
+  https://gist.github.com/dasMulli/b14026437468ce4b56ef93e010f24a36
+  -->
+
+</Project>

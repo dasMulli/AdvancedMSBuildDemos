@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)nupkgs</PackageOutputPath>
+    <Authors>.NET Fest</Authors>
+    <PackageVersion>1.2.3</PackageVersion>
+  </PropertyGroup>
+</Project>
