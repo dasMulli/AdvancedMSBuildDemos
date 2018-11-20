@@ -1,0 +1,6 @@
+[submodule "AssemblyInfoGenerationSdk"]
+	path = AssemblyInfoGenerationSdk
+	url = https://github.com/dasMulli/AssemblyInfoGenerationSdk.git
+[submodule "NewCSProj"]
+	path = NewCSProj
+	url = https://github.com/SabotageAndi/NewCSProj.git
