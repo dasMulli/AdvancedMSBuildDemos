@@ -1,4 +1,5 @@
-<Project>  
+<Project>
+
   <Target Name="IncludePublishOutputInCopyToOutputDirectoryItems" BeforeTargets="GetCopyToOutputDirectoryItems" Condition="'$(ReferencingPublishOutput)' == 'true'">
     <PropertyGroup>
       <OutputBasePath Condition="'$(OutputBasePath)' == ''">$(MSBuildProjectName)\</OutputBasePath>
@@ -8,7 +9,9 @@
       <Output TaskParameter="TargetOutputs" ItemName="PublishOutputs"/>
     </MSBuild>
     <ItemGroup>
-      <AllItemsFullPathWithTargetPath Include="@(PublishOutputs->'%(FullPath)')" TargetPath="$(OutputBasePath)\%(PublishOutputs.PublishPath)" CopyToOutputDirectory="PreserveNewest" />
+      <_PublishedItemsFullPathWithTargetPath Include="@(PublishOutputs->'%(FullPath)')" TargetPath="$(OutputBasePath)\%(PublishOutputs.PublishPath)" />
+      <AllItemsFullPathWithTargetPath Include="@(_PublishedItemsFullPathWithTargetPath)" CopyToOutputDirectory="PreserveNewest" />
+      <AllPublishItemsFullPathWithTargetPath Include="@(_PublishedItemsFullPathWithTargetPath)" CopyToPublishDirectory="PreserveNewest" />
     </ItemGroup>
   </Target>
 
